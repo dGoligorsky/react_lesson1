@@ -15,12 +15,21 @@ const Intro = () => (
         </div>
     );
 
+const menu = ['About', 'Tickets', 'Logo', 'Journal', 'Contact'];
+
+const Nav = () => (
+    <nav>
+        <ul>{menu.map(item => <li>{item}</li>)}</ul>
+    </nav>
+)
+
 
 
 const App = () => (
     <div>
         <div className="min-vh-100 ph4 flex flex-column">
             {/* our navigation component */}
+            <Nav />
             <Intro />
         </div>
         <div className="flex flex-wrap container"> 
