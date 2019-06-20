@@ -40,6 +40,22 @@ const Nav = () => (
     </nav>
 );
 
+const Overlay = ({showInfo, title, description}) => (
+    <div 
+        className="absolute w-100 h-100 flex items-center pa3 pa4-ns bg-aqua overlay"
+        style={{
+            // we do a test to see whether our showInfo state is true
+            // if it is, we change the transform to be none, otherwise -100% Y
+            transform: showInfo ? 'none' : 'translateY(-100%)'
+        }}
+    >
+        <div>
+            <h1 className="f4 f3-ns mt0 mb2 regular black normal lh-title">{title}</h1>
+            <p className="lh-title lh-copy-ns mv0 black f6 measure-l">{description}</p>
+        </div>
+    </div>
+) 
+
 // we can also create components as classes
 // these give us more advanced functionality and features such as the component lifecucle as well as react's in-built state
 
@@ -48,35 +64,41 @@ class Attraction extends React.Component {
         constructor(props) {
             super(props)
             this.state = {
-                fullName: ''
+                showInfo: false
             }
+            // here we tell our toggleInfo about this by using bind
+            // otherwise things like setState will not work
+            this.toggleInfo = this.toggleInfo.bind(this)
+            this.closeInfo = this.closeInfo.bind(this)
+        }
+        // this is our own method
+        toggleInfo() {
+
+            this.setState((prevState, props) => ({
+                showInfo: !prevState.showInfo
+            }))
+        }
+
+        closeInfo() {
+            // here we use setState the usual way because we don't need access to the previous state, we're just force setting the showInfo to be False
+            this.setState({
+                showInfo: false
+            })
         }
 
     render () {
         const {title, description, className, image} = this.props
+        const {showInfo} = this.state
         return(
             <div
-            className={`ph4 ph5-ns ph0-l mb4 mb5-ns w-100 overflow-hidden pointer attraction ${className}`}
+                className={`ph4 ph5-ns ph0-l mb4 mb5-ns w-100 overflow-hidden pointer attraction ${className}`}
+                onClick={this.toggleInfo}
+                // this runs when our mouse leaves the attraction element
+                onMouseLeave={this.closeInfo}
             >
-            
-            <input 
-                className="relative z-3"
-                onChange = { event => 
-                    this.setState({
-                        fullName: event.target.value
-                    })
-                } 
-            />
-
-            <h1>{this.state.fullName}</h1>
 
             <div className="relative">
-                <div className="absolute w-100 h-100 flex items-center pa3 pa4-ns bg-aqua overlay">
-                    <div>
-                        <h1 className="f4 f3-ns mt0 mb2 regular black normal lh-title">{title}</h1>
-                        <p className="lh-title lh-copy-ns mv0 black f6 measure-l">{description}</p>
-                    </div>
-                </div>
+                <Overlay {...this.props} {...this.state} />
                 <img src={`../images/${image}`} className="db" />
             </div>
           </div>
